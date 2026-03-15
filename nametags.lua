@@ -52,7 +52,7 @@ local customPlayers = {
 		cornerRadius = 20,
 	},
 	["KWHY0_0"] = {
-		customName = "BIG DICK DOM",
+		customName = "z33to KWHY",
 		icon       = "rbxassetid://139117044448847",
 		glitch     = true,
 		gradientColorLeft = Color3.fromRGB(255, 0, 0),
