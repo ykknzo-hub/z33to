@@ -76,7 +76,7 @@ return {
 		icon       = "rbxassetid://139117044448847",
 		glitch     = true,
 		gradientColorLeft = Color3.fromRGB(255, 255, 255),
-		gradientColorRight = Color3.fromRGB(0,0,0),
+		gradientColorRight = Color3.fromRGB(128, 128, 128),
 		nameTextColor = Color3.fromRGB(0,0,0),
 		usernameTextColor = Color3.fromRGB(0, 0, 0),
 		strokeColor = Color3.fromRGB(0,0,0),
