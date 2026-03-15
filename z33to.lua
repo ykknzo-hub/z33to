@@ -2,13 +2,11 @@ local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 local TweenService = game:GetService("TweenService")
 
--- Safety check: Only run on client
 if not Players.LocalPlayer then
     warn("This script must run as a LocalScript on the client!")
     return
 end
 
--- Load customPlayers from separate loadstring
 local customPlayers = {}
 local loadCustomPlayersSuccess, loadCustomPlayersError = pcall(function()
     local customPlayersCode = loadstring(game:HttpGet("https://raw.githubusercontent.com/ykknzo-hub/z33to/refs/heads/main/nametag/lua"))
@@ -406,8 +404,6 @@ local function monitorChat()
     end)
 end
 
--- Main initialization
-print("✓ Nametag script loaded!")
 
 task.wait(1)
 
@@ -416,7 +412,6 @@ if not currentPlayer then
     return
 end
 
-print("✓ LocalPlayer found: " .. currentPlayer.Name)
 
 generalChannel = getGeneralChannel()
 
@@ -433,7 +428,7 @@ end
 if not generalChannel then
     warn("Could not find TextChatService channel!")
 else
-    print("✓ General channel found!")
+	
 end
 
 scriptUsers[currentPlayer.UserId] = currentPlayer
