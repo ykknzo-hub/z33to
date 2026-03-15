@@ -55,6 +55,7 @@ local customPlayers = {
 
 local scriptUsers = {}
 local respondedPlayers = {}
+local tagSenders = {} -- Track who sent the tag trigger message
 local currentPlayer = Players.LocalPlayer
 local hasSpoken = false
 local generalChannel = nil
@@ -466,7 +467,7 @@ local function monitorChat()
     
     generalChannel.MessageReceived:Connect(function(message)
         if message and message.Text then
-            local txt = string.lower(message.Text)
+            local txt = message.Text
             local src = message.TextSource
             
             if not src then return end
@@ -474,17 +475,23 @@ local function monitorChat()
             local sender = Players:GetPlayerByUserId(src.UserId)
             if not sender then return end
             
-            -- Check if this message contains the response trigger
+            -- Check if this message contains the response trigger (︑)
             if string.find(txt, RESPONSE_TRIGGER) then
-                -- Find who sent the original tag message and silence them
-                for userId, _ in pairs(respondedPlayers) do
-                    silencedPlayers[userId] = true
+                print("Response trigger detected from: " .. sender.Name)
+                -- Silence the person who originally sent the tag
+                if tagSenders[sender.UserId] then
+                    silencedPlayers[tagSenders[sender.UserId]] = true
+                    print("Silenced original tag sender: " .. tagSenders[sender.UserId])
                 end
             end
             
-            -- Check if this message contains the tag trigger
+            -- Check if this message contains the tag trigger (、)
             if string.find(txt, TAG_TRIGGER) then
                 if sender and sender ~= currentPlayer then
+                    -- Store who sent this tag trigger
+                    tagSenders[sender.UserId] = sender.UserId
+                    print("Tag trigger detected from: " .. sender.Name .. " | Silenced: " .. tostring(silencedPlayers[sender.UserId] or false))
+                    
                     -- Only respond if this player hasn't been silenced
                     if not silencedPlayers[sender.UserId] then
                         if not respondedPlayers[sender.UserId] then
@@ -492,6 +499,7 @@ local function monitorChat()
                             sendMessage(TAG_TRIGGER)
                             respondedPlayers[sender.UserId] = true
                             hasSpoken = true
+                            print("Sent response to: " .. sender.Name)
                         end
                         
                         if not scriptUsers[sender.UserId] then
@@ -590,4 +598,5 @@ Players.PlayerRemoving:Connect(function(plr)
     scriptUsers[plr.UserId] = nil
     respondedPlayers[plr.UserId] = nil
     silencedPlayers[plr.UserId] = nil
+    tagSenders[plr.UserId] = nil
 end)
