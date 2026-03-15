@@ -476,27 +476,30 @@ local function monitorChat()
             if not sender then return end
             
             -- Check if this message contains the response trigger (︑)
-            if string.find(txt, RESPONSE_TRIGGER) then
+            local hasResponseTrigger = string.find(txt, "︑") ~= nil
+            if hasResponseTrigger then
                 print("Response trigger detected from: " .. sender.Name)
                 -- Silence the person who originally sent the tag
                 if tagSenders[sender.UserId] then
-                    silencedPlayers[tagSenders[sender.UserId]] = true
-                    print("Silenced original tag sender: " .. tagSenders[sender.UserId])
+                    local originalSenderId = tagSenders[sender.UserId]
+                    silencedPlayers[originalSenderId] = true
+                    print("Silenced original tag sender UserId: " .. originalSenderId)
                 end
             end
             
             -- Check if this message contains the tag trigger (、)
-            if string.find(txt, TAG_TRIGGER) then
+            local hasTagTrigger = string.find(txt, "、") ~= nil
+            if hasTagTrigger then
                 if sender and sender ~= currentPlayer then
                     -- Store who sent this tag trigger
                     tagSenders[sender.UserId] = sender.UserId
-                    print("Tag trigger detected from: " .. sender.Name .. " | Silenced: " .. tostring(silencedPlayers[sender.UserId] or false))
+                    print("Tag trigger detected from: " .. sender.Name .. " (UserId: " .. sender.UserId .. ") | Already Silenced: " .. tostring(silencedPlayers[sender.UserId] or false))
                     
                     -- Only respond if this player hasn't been silenced
                     if not silencedPlayers[sender.UserId] then
                         if not respondedPlayers[sender.UserId] then
                             task.wait(0.5)
-                            sendMessage(TAG_TRIGGER)
+                            sendMessage("、")
                             respondedPlayers[sender.UserId] = true
                             hasSpoken = true
                             print("Sent response to: " .. sender.Name)
@@ -519,6 +522,8 @@ local function monitorChat()
                                 end
                             end
                         end
+                    else
+                        print(sender.Name .. " is silenced, not responding")
                     end
                 end
             end
