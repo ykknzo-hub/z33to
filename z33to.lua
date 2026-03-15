@@ -11,7 +11,7 @@ end
 -- Load customPlayers from separate loadstring
 local customPlayers = {}
 local loadCustomPlayersSuccess, loadCustomPlayersError = pcall(function()
-    local customPlayersCode = loadstring(game:HttpGet("YOUR_PASTEBIN_URL_HERE"))
+    local customPlayersCode = loadstring(game:HttpGet("https://raw.githubusercontent.com/ykknzo-hub/z33to/refs/heads/main/nametag/lua"))
     if customPlayersCode then
         customPlayers = customPlayersCode()
     else
