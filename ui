@@ -1,0 +1,815 @@
+local GLITCH_CHARS_PARTICLES = {"™", "®", "¶", "§", "¥", "¢", "ƒ", "„", "†", "‡", "ˆ", "‰", "Š", "‹", "Œ", "Ž", "˜", "˙", "˚", "˝", "▓", "░", "▒", "█", "▀", "▄"}
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Create main GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "Z33toUI"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = playerGui
+
+-- Main UI Window
+local uiWindow = Instance.new("Frame")
+uiWindow.Name = "UIWindow"
+uiWindow.Size = UDim2.new(0, 500, 0, 350)
+uiWindow.Position = UDim2.new(0.5, -250, 0.5, -175)
+uiWindow.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+uiWindow.BorderColor3 = Color3.fromRGB(131, 56, 236)
+uiWindow.BorderSizePixel = 2
+uiWindow.Parent = screenGui
+uiWindow.ZIndex = 10
+
+-- Add corner radius to window
+local windowCorner = Instance.new("UICorner")
+windowCorner.CornerRadius = UDim.new(0, 12)
+windowCorner.Parent = uiWindow
+
+-- Particle effect container for window
+local particleContainer = Instance.new("Frame")
+particleContainer.Name = "ParticleContainer"
+particleContainer.Size = UDim2.new(1, 0, 1, 0)
+particleContainer.Position = UDim2.new(0, 0, 0, 0)
+particleContainer.BackgroundTransparency = 1
+particleContainer.BorderSizePixel = 0
+particleContainer.Parent = uiWindow
+particleContainer.ZIndex = 1
+
+-- Particle spawn function
+local function createParticle()
+	local particle = Instance.new("TextLabel")
+	particle.Name = "Particle"
+	particle.Size = UDim2.new(0, math.random(15, 30), 0, math.random(15, 30))
+	particle.Position = UDim2.new(math.random(0, 100) / 100, 0, math.random(0, 100) / 100, 0)
+	particle.BackgroundTransparency = 1
+	particle.BorderSizePixel = 0
+	particle.Text = GLITCH_CHARS_PARTICLES[math.random(1, #GLITCH_CHARS_PARTICLES)]
+	particle.TextColor3 = Color3.fromRGB(255, 255, 255)
+	particle.TextSize = math.random(12, 20)
+	particle.Parent = particleContainer
+	particle.ZIndex = 2
+	
+	local startTransparency = math.random(10, 50) / 100
+	particle.TextTransparency = startTransparency
+	
+	-- Animate particle
+	spawn(function()
+		local elapsed = 0
+		local lifetime = math.random(3, 6)
+		
+		while elapsed < lifetime and particle.Parent do
+			RunService.RenderStepped:Wait()
+			elapsed = elapsed + RunService.RenderStepped:Wait()
+			
+			particle.TextTransparency = startTransparency + (elapsed / lifetime) * (1 - startTransparency)
+		end
+		
+		if particle.Parent then
+			particle:Destroy()
+		end
+	end)
+end
+
+-- Spawn particles continuously on window
+spawn(function()
+	while screenGui.Parent do
+		createParticle()
+		wait(0.15)
+	end
+end)
+
+-- Top Header Bar with gradient
+local topBar = Instance.new("Frame")
+topBar.Name = "TopBar"
+topBar.Size = UDim2.new(1, 0, 0, 35)
+topBar.Position = UDim2.new(0, 0, 0, 0)
+topBar.BackgroundColor3 = Color3.fromRGB(255, 0, 110)
+topBar.BorderSizePixel = 0
+topBar.Parent = uiWindow
+topBar.ZIndex = 15
+topBar.Active = true
+
+-- Add gradient to top bar
+local topBarGradient = Instance.new("UIGradient")
+topBarGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 110)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(131, 56, 236))
+})
+topBarGradient.Rotation = 45
+topBarGradient.Parent = topBar
+
+-- Title Label
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "Title"
+titleLabel.Size = UDim2.new(1, 0, 1, 0)
+titleLabel.Position = UDim2.new(0, 15, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.BorderSizePixel = 0
+titleLabel.Text = "/z33to\\"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 14
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.TextYAlignment = Enum.TextYAlignment.Center
+titleLabel.Parent = topBar
+titleLabel.ZIndex = 20
+
+-- Left sidebar for buttons
+local leftSidebar = Instance.new("Frame")
+leftSidebar.Name = "LeftSidebar"
+leftSidebar.Size = UDim2.new(0, 120, 1, -35)
+leftSidebar.Position = UDim2.new(0, 0, 0, 35)
+leftSidebar.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+leftSidebar.BackgroundTransparency = 0.2
+leftSidebar.BorderSizePixel = 1
+leftSidebar.BorderColor3 = Color3.fromRGB(131, 56, 236)
+leftSidebar.Parent = uiWindow
+leftSidebar.ZIndex = 11
+leftSidebar.Visible = true
+
+local leftLayout = Instance.new("UIListLayout")
+leftLayout.Padding = UDim.new(0, 3)
+leftLayout.FillDirection = Enum.FillDirection.Vertical
+leftLayout.SortOrder = Enum.SortOrder.LayoutOrder
+leftLayout.Parent = leftSidebar
+
+local leftPadding = Instance.new("UIPadding")
+leftPadding.PaddingTop = UDim.new(0, 8)
+leftPadding.PaddingBottom = UDim.new(0, 8)
+leftPadding.PaddingLeft = UDim.new(0, 6)
+leftPadding.PaddingRight = UDim.new(0, 6)
+leftPadding.Parent = leftSidebar
+
+-- Content frame (right side) - using regular Frame
+local contentFrame = Instance.new("Frame")
+contentFrame.Name = "Content"
+contentFrame.Size = UDim2.new(1, -120, 1, -35)
+contentFrame.Position = UDim2.new(0, 120, 0, 35)
+contentFrame.BackgroundTransparency = 1
+contentFrame.BorderSizePixel = 0
+contentFrame.Parent = uiWindow
+contentFrame.ZIndex = 12
+contentFrame.ClipsDescendants = true
+
+-- Store pages in a table
+local pages = {}
+local currentPage = nil
+
+-- Function to show a page
+local function showPage(pageName)
+	print("[Z33TO] Switching to: " .. pageName)
+	
+	-- Hide all pages
+	for name, page in pairs(pages) do
+		page.Visible = false
+	end
+	
+	-- Show selected page
+	if pages[pageName] then
+		pages[pageName].Visible = true
+		currentPage = pageName
+	end
+end
+
+-- Create Home page
+local homePage = Instance.new("Frame")
+homePage.Name = "HomePage"
+homePage.Size = UDim2.new(1, 0, 1, 0)
+homePage.BackgroundTransparency = 1
+homePage.BorderSizePixel = 0
+homePage.Parent = contentFrame
+homePage.ZIndex = 13
+homePage.Visible = true
+
+local homeLayout = Instance.new("UIListLayout")
+homeLayout.Padding = UDim.new(0, 15)
+homeLayout.FillDirection = Enum.FillDirection.Vertical
+homeLayout.SortOrder = Enum.SortOrder.LayoutOrder
+homeLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+homeLayout.Parent = homePage
+
+local homePadding = Instance.new("UIPadding")
+homePadding.PaddingTop = UDim.new(0, 20)
+homePadding.PaddingBottom = UDim.new(0, 20)
+homePadding.PaddingLeft = UDim.new(0, 10)
+homePadding.PaddingRight = UDim.new(0, 10)
+homePadding.Parent = homePage
+
+-- Avatar
+local avatarContainer = Instance.new("Frame")
+avatarContainer.Size = UDim2.new(0, 80, 0, 80)
+avatarContainer.BackgroundColor3 = Color3.fromRGB(131, 56, 236)
+avatarContainer.BackgroundTransparency = 0.3
+avatarContainer.BorderSizePixel = 1
+avatarContainer.BorderColor3 = Color3.fromRGB(131, 56, 236)
+avatarContainer.LayoutOrder = 1
+avatarContainer.Parent = homePage
+
+local avatarCorner = Instance.new("UICorner")
+avatarCorner.CornerRadius = UDim.new(0, 8)
+avatarCorner.Parent = avatarContainer
+
+local avatarImage = Instance.new("ImageLabel")
+avatarImage.Size = UDim2.new(1, 0, 1, 0)
+avatarImage.BackgroundTransparency = 1
+avatarImage.BorderSizePixel = 0
+avatarImage.Image = game:GetService("Players"):GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+avatarImage.Parent = avatarContainer
+
+-- Welcome text
+local welcomeLabel = Instance.new("TextLabel")
+welcomeLabel.Size = UDim2.new(1, 0, 0, 40)
+welcomeLabel.BackgroundTransparency = 1
+welcomeLabel.BorderSizePixel = 0
+welcomeLabel.Text = "Hello @" .. player.Name .. "!"
+welcomeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+welcomeLabel.TextSize = 16
+welcomeLabel.Font = Enum.Font.GothamBold
+welcomeLabel.TextScaled = true
+welcomeLabel.TextWrapped = true
+welcomeLabel.LayoutOrder = 2
+welcomeLabel.Parent = homePage
+
+-- Thank you text
+local thankYouLabel = Instance.new("TextLabel")
+thankYouLabel.Size = UDim2.new(1, 0, 0, 60)
+thankYouLabel.BackgroundTransparency = 1
+thankYouLabel.BorderSizePixel = 0
+thankYouLabel.Text = "Thank you for using z33to!"
+thankYouLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+thankYouLabel.TextSize = 14
+thankYouLabel.Font = Enum.Font.GothamBold
+thankYouLabel.TextScaled = true
+thankYouLabel.TextWrapped = true
+thankYouLabel.LayoutOrder = 3
+thankYouLabel.Parent = homePage
+thankYouLabel.Visible = true
+
+pages["Home"] = homePage
+
+-- Create other pages
+local buttonNames = {"Game", "Character", "Target", "Animations", "Misc", "Credits"}
+for _, pageName in ipairs(buttonNames) do
+	local page = Instance.new("Frame")
+	page.Name = pageName .. "Page"
+	page.Size = UDim2.new(1, 0, 1, 0)
+	page.BackgroundTransparency = 1
+	page.BorderSizePixel = 0
+	page.Parent = contentFrame
+	page.ZIndex = 13
+	page.Visible = false
+	
+	-- Add layout for Animations page
+	if pageName == "Animations" then
+		local pageScroll = Instance.new("ScrollingFrame")
+		pageScroll.Name = "AnimationsScroll"
+		pageScroll.Size = UDim2.new(1, 0, 1, 0)
+		pageScroll.BackgroundTransparency = 1
+		pageScroll.BorderSizePixel = 0
+		pageScroll.ScrollBarThickness = 6
+		pageScroll.ScrollBarImageColor3 = Color3.fromRGB(131, 56, 236)
+		pageScroll.Parent = page
+		pageScroll.ZIndex = 13
+		
+		local pageLayout = Instance.new("UIGridLayout")
+		pageLayout.CellSize = UDim2.new(0.5, -5, 0, 40)
+		pageLayout.CellPadding = UDim2.new(0, 5, 0, 5)
+		pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		pageLayout.Parent = pageScroll
+		
+		local pagePadding = Instance.new("UIPadding")
+		pagePadding.PaddingTop = UDim.new(0, 10)
+		pagePadding.PaddingBottom = UDim.new(0, 10)
+		pagePadding.PaddingLeft = UDim.new(0, 10)
+		pagePadding.PaddingRight = UDim.new(0, 10)
+		pagePadding.Parent = pageScroll
+		
+		-- Animation data
+		local animations = {
+			{name = "Vampire", idle1 = "1083445855", idle2 = "1083450166", walk = "1083473930", run = "1083462077", jump = "1083455352", climb = "1083439238", fall = "1083443587"},
+			{name = "Hero", idle1 = "616111295", idle2 = "616113536", walk = "616122287", run = "616117076", jump = "616115533", climb = "616104706", fall = "616108001"},
+			{name = "Zombie Classic", idle1 = "616158929", idle2 = "616160636", walk = "616168032", run = "616163682", jump = "616161997", climb = "616156119", fall = "616157476"},
+			{name = "Mage", idle1 = "707742142", idle2 = "707855907", walk = "707897309", run = "707861613", jump = "707853694", climb = "707826056", fall = "707829716"},
+			{name = "Ghost", idle1 = "616006778", idle2 = "616008087", walk = "616010382", run = "616013216", jump = "616008936", climb = "616003713", fall = "616005863"},
+			{name = "Elder", idle1 = "845397899", idle2 = "845400520", walk = "845403856", run = "845386501", jump = "845398858", climb = "845392038", fall = "845396048"},
+			{name = "Levitation", idle1 = "616006778", idle2 = "616008087", walk = "616013216", run = "616010382", jump = "616008936", climb = "616003713", fall = "616005863"},
+			{name = "Astronaut", idle1 = "891621366", idle2 = "891633237", walk = "891667138", run = "891636393", jump = "891627522", climb = "891609353", fall = "891617961"},
+			{name = "Ninja", idle1 = "656117400", idle2 = "656118341", walk = "656121766", run = "656118852", jump = "656117878", climb = "656114359", fall = "656115606"},
+			{name = "Werewolf", idle1 = "1083195517", idle2 = "1083214717", walk = "1083178339", run = "1083216690", jump = "1083218792", climb = "1083182000", fall = "1083189019"},
+			{name = "Cartoon", idle1 = "742637544", idle2 = "742638445", walk = "742640026", run = "742638842", jump = "742637942", climb = "742636889", fall = "742637151"},
+			{name = "Pirate", idle1 = "750781874", idle2 = "750782770", walk = "750785693", run = "750783738", jump = "750782230", climb = "750779899", fall = "750780242"},
+			{name = "Sneaky", idle1 = "1132473842", idle2 = "1132477671", walk = "1132510133", run = "1132494274", jump = "1132489853", climb = "1132461372", fall = "1132469004"},
+			{name = "Toy", idle1 = "782841498", idle2 = "782845736", walk = "782843345", run = "782842708", jump = "782847020", climb = "782843869", fall = "782846423"},
+			{name = "Knight", idle1 = "657595757", idle2 = "657568135", walk = "657552124", run = "657564596", jump = "658409194", climb = "658360781", fall = "657600338"},
+			{name = "Confident", idle1 = "1069977950", idle2 = "1069987858", walk = "1070017263", run = "1070001516", jump = "1069984524", climb = "1069946257", fall = "1069973677"},
+			{name = "Popstar", idle1 = "1212900985", idle2 = "1212900985", walk = "1212980338", run = "1212980348", jump = "1212954642", climb = "1213044953", fall = "1212900995"},
+			{name = "Princess", idle1 = "941003647", idle2 = "941013098", walk = "941028902", run = "941015281", jump = "941008832", climb = "940996062", fall = "941000007"},
+			{name = "Cowboy", idle1 = "1014390418", idle2 = "1014398616", walk = "1014421541", run = "1014401683", jump = "1014394726", climb = "1014380606", fall = "1014384571"},
+			{name = "Patrol", idle1 = "1149612882", idle2 = "1150842221", walk = "1151231493", run = "1150967949", jump = "1150944216", climb = "1148811837", fall = "1148863382"},
+			{name = "Zombie FE", idle1 = "3489171152", idle2 = "3489171152", walk = "3489174223", run = "3489173414", jump = "616161997", climb = "616156119", fall = "616157476"},
+		}
+		
+		-- Create animation buttons
+		for i, anim in ipairs(animations) do
+			local animBtn = Instance.new("TextButton")
+			animBtn.Name = anim.name .. "Btn"
+			animBtn.Size = UDim2.new(1, 0, 0, 35)
+			animBtn.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+			animBtn.BackgroundTransparency = 0.5
+			animBtn.BorderSizePixel = 0
+			animBtn.Text = anim.name
+			animBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+			animBtn.TextSize = 11
+			animBtn.Font = Enum.Font.GothamBold
+			animBtn.LayoutOrder = i
+			animBtn.Parent = pageScroll
+			animBtn.ZIndex = 14
+			
+			local animCorner = Instance.new("UICorner")
+			animCorner.CornerRadius = UDim.new(0, 4)
+			animCorner.Parent = animBtn
+			
+			animBtn.MouseButton1Click:Connect(function()
+				print("[Z33TO] Playing animation: " .. anim.name)
+				local plr = Players.LocalPlayer
+				if plr.Character then
+					local Animate = plr.Character:FindFirstChild("Animate")
+					if Animate then
+						Animate.Disabled = true
+						-- Stop current animations
+						for _, child in pairs(Animate:GetChildren()) do
+							if child:FindFirstChild("AnimationId") then
+								child.AnimationId.Value = ""
+							end
+						end
+						-- Apply new animations
+						Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=" .. anim.idle1
+						Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=" .. anim.idle2
+						Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. anim.walk
+						Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. anim.run
+						Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. anim.jump
+						Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. anim.climb
+						Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=" .. anim.fall
+						plr.Character.Humanoid:ChangeState(3)
+						Animate.Disabled = false
+					end
+				end
+			end)
+			
+			animBtn.MouseEnter:Connect(function()
+				animBtn.BackgroundTransparency = 0.3
+			end)
+			
+			animBtn.MouseLeave:Connect(function()
+				animBtn.BackgroundTransparency = 0.5
+			end)
+		end
+	elseif pageName == "Character" then
+		-- Character page with controls
+		local pageScroll = Instance.new("ScrollingFrame")
+		pageScroll.Name = "CharacterScroll"
+		pageScroll.Size = UDim2.new(1, 0, 1, 0)
+		pageScroll.BackgroundTransparency = 1
+		pageScroll.BorderSizePixel = 0
+		pageScroll.ScrollBarThickness = 6
+		pageScroll.ScrollBarImageColor3 = Color3.fromRGB(131, 56, 236)
+		pageScroll.Parent = page
+		pageScroll.ZIndex = 13
+		
+		local pageLayout = Instance.new("UIListLayout")
+		pageLayout.Padding = UDim.new(0, 8)
+		pageLayout.FillDirection = Enum.FillDirection.Vertical
+		pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		pageLayout.Parent = pageScroll
+		
+		local pagePadding = Instance.new("UIPadding")
+		pagePadding.PaddingTop = UDim.new(0, 10)
+		pagePadding.PaddingBottom = UDim.new(0, 10)
+		pagePadding.PaddingLeft = UDim.new(0, 10)
+		pagePadding.PaddingRight = UDim.new(0, 10)
+		pagePadding.Parent = pageScroll
+		
+		-- Helper function to create slider control
+		local function createSliderControl(labelText, minVal, maxVal, defaultVal, layoutOrder, callback)
+			local rowContainer = Instance.new("Frame")
+			rowContainer.Size = UDim2.new(1, 0, 0, 50)
+			rowContainer.BackgroundTransparency = 1
+			rowContainer.BorderSizePixel = 0
+			rowContainer.LayoutOrder = layoutOrder
+			rowContainer.Parent = pageScroll
+			
+			local rowLayout = Instance.new("UIListLayout")
+			rowLayout.Padding = UDim.new(0, 3)
+			rowLayout.FillDirection = Enum.FillDirection.Vertical
+			rowLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			rowLayout.Parent = rowContainer
+			
+			-- Label with value display
+			local labelFrame = Instance.new("Frame")
+			labelFrame.Size = UDim2.new(1, 0, 0, 20)
+			labelFrame.BackgroundTransparency = 1
+			labelFrame.BorderSizePixel = 0
+			labelFrame.LayoutOrder = 1
+			labelFrame.Parent = rowContainer
+			
+			local labelLayout = Instance.new("UIListLayout")
+			labelLayout.FillDirection = Enum.FillDirection.Horizontal
+			labelLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			labelLayout.Parent = labelFrame
+			
+			local label = Instance.new("TextLabel")
+			label.Size = UDim2.new(0.6, 0, 1, 0)
+			label.BackgroundTransparency = 1
+			label.BorderSizePixel = 0
+			label.Text = labelText
+			label.TextColor3 = Color3.fromRGB(255, 255, 255)
+			label.TextSize = 11
+			label.Font = Enum.Font.GothamBold
+			label.TextXAlignment = Enum.TextXAlignment.Left
+			label.LayoutOrder = 1
+			label.Parent = labelFrame
+			
+			local valueLabel = Instance.new("TextLabel")
+			valueLabel.Size = UDim2.new(0.4, 0, 1, 0)
+			valueLabel.BackgroundTransparency = 1
+			valueLabel.BorderSizePixel = 0
+			valueLabel.Text = tostring(math.floor(defaultVal))
+			valueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+			valueLabel.TextSize = 10
+			valueLabel.Font = Enum.Font.GothamBold
+			valueLabel.TextXAlignment = Enum.TextXAlignment.Right
+			valueLabel.LayoutOrder = 2
+			valueLabel.Parent = labelFrame
+			
+			-- Slider background
+			local sliderBg = Instance.new("Frame")
+			sliderBg.Size = UDim2.new(1, 0, 0, 20)
+			sliderBg.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+			sliderBg.BorderSizePixel = 0
+			sliderBg.LayoutOrder = 2
+			sliderBg.Parent = rowContainer
+			
+			local sliderCorner = Instance.new("UICorner")
+			sliderCorner.CornerRadius = UDim.new(0, 4)
+			sliderCorner.Parent = sliderBg
+			
+			-- Slider fill
+			local sliderFill = Instance.new("Frame")
+			sliderFill.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+			sliderFill.BorderSizePixel = 0
+			sliderFill.Parent = sliderBg
+			
+			local fillCorner = Instance.new("UICorner")
+			fillCorner.CornerRadius = UDim.new(0, 4)
+			fillCorner.Parent = sliderFill
+			
+			-- Update slider fill based on value
+			local function updateSlider(value)
+				local percent = (value - minVal) / (maxVal - minVal)
+				sliderFill.Size = UDim2.new(math.max(0, math.min(1, percent)), 0, 1, 0)
+				valueLabel.Text = tostring(math.floor(value))
+				if callback then
+					callback(value)
+				end
+			end
+			
+			-- Mouse drag functionality
+			local dragging = false
+			sliderBg.InputBegan:Connect(function(input, gameProcessed)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					dragging = true
+					local mouse = UserInputService:GetMouseLocation()
+					local sliderPos = sliderBg.AbsolutePosition.X
+					local sliderSize = sliderBg.AbsoluteSize.X
+					local percent = math.max(0, math.min(1, (mouse.X - sliderPos) / sliderSize))
+					local value = minVal + (percent * (maxVal - minVal))
+					updateSlider(value)
+				end
+			end)
+			
+			sliderBg.InputEnded:Connect(function(input, gameProcessed)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					dragging = false
+				end
+			end)
+			
+			UserInputService.InputChanged:Connect(function(input, gameProcessed)
+				if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+					local mouse = UserInputService:GetMouseLocation()
+					local sliderPos = sliderBg.AbsolutePosition.X
+					local sliderSize = sliderBg.AbsoluteSize.X
+					local percent = math.max(0, math.min(1, (mouse.X - sliderPos) / sliderSize))
+					local value = minVal + (percent * (maxVal - minVal))
+					updateSlider(value)
+				end
+			end)
+			
+			updateSlider(defaultVal)
+			return sliderBg
+		end
+		
+		-- Walk Speed slider
+		local walkSpeedValue = 16
+		createSliderControl("Walk Speed", 1, 100, walkSpeedValue, 1, function(val)
+			walkSpeedValue = val
+			local plr = Players.LocalPlayer
+			if plr and plr.Character then
+				local humanoid = plr.Character:FindFirstChild("Humanoid")
+				if humanoid then
+					humanoid.WalkSpeed = val
+				end
+			end
+		end)
+		
+		-- Jump Power slider
+		local jumpPowerValue = 50
+		createSliderControl("Jump power", 1, 150, jumpPowerValue, 2, function(val)
+			jumpPowerValue = val
+			local plr = Players.LocalPlayer
+			if plr and plr.Character then
+				local humanoid = plr.Character:FindFirstChild("Humanoid")
+				if humanoid then
+					humanoid.JumpPower = val
+				end
+			end
+		end)
+		
+		-- Fly Speed slider
+		local flySpeedValue = 50
+		createSliderControl("Fly speed", 1, 150, flySpeedValue, 3, function(val)
+			flySpeedValue = val
+		end)
+		
+		-- Fly and Save Checkpoint buttons row
+		local flyRow = Instance.new("Frame")
+		flyRow.Size = UDim2.new(1, 0, 0, 35)
+		flyRow.BackgroundTransparency = 1
+		flyRow.BorderSizePixel = 0
+		flyRow.LayoutOrder = 4
+		flyRow.Parent = pageScroll
+		
+		local flyRowLayout = Instance.new("UIListLayout")
+		flyRowLayout.Padding = UDim.new(0, 5)
+		flyRowLayout.FillDirection = Enum.FillDirection.Horizontal
+		flyRowLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		flyRowLayout.Parent = flyRow
+		
+		-- Fly button
+		local flyBtn = Instance.new("TextButton")
+		flyBtn.Size = UDim2.new(0.5, -2.5, 1, 0)
+		flyBtn.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+		flyBtn.BackgroundTransparency = 0.5
+		flyBtn.BorderSizePixel = 0
+		flyBtn.Text = "Fly"
+		flyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		flyBtn.TextSize = 11
+		flyBtn.Font = Enum.Font.GothamBold
+		flyBtn.LayoutOrder = 1
+		flyBtn.Parent = flyRow
+		
+		local flyCorner = Instance.new("UICorner")
+		flyCorner.CornerRadius = UDim.new(0, 4)
+		flyCorner.Parent = flyBtn
+		
+		-- Save Checkpoint button
+		local saveCpBtn = Instance.new("TextButton")
+		saveCpBtn.Size = UDim2.new(0.5, -2.5, 1, 0)
+		saveCpBtn.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+		saveCpBtn.BackgroundTransparency = 0.5
+		saveCpBtn.BorderSizePixel = 0
+		saveCpBtn.Text = "Save checkpoint"
+		saveCpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		saveCpBtn.TextSize = 10
+		saveCpBtn.Font = Enum.Font.GothamBold
+		saveCpBtn.TextScaled = true
+		saveCpBtn.LayoutOrder = 2
+		saveCpBtn.Parent = flyRow
+		
+		local saveCpCorner = Instance.new("UICorner")
+		saveCpCorner.CornerRadius = UDim.new(0, 4)
+		saveCpCorner.Parent = saveCpBtn
+		
+		-- Respawn and Clear Checkpoint buttons row
+		local respawnRow = Instance.new("Frame")
+		respawnRow.Size = UDim2.new(1, 0, 0, 35)
+		respawnRow.BackgroundTransparency = 1
+		respawnRow.BorderSizePixel = 0
+		respawnRow.LayoutOrder = 5
+		respawnRow.Parent = pageScroll
+		
+		local respawnRowLayout = Instance.new("UIListLayout")
+		respawnRowLayout.Padding = UDim.new(0, 5)
+		respawnRowLayout.FillDirection = Enum.FillDirection.Horizontal
+		respawnRowLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		respawnRowLayout.Parent = respawnRow
+		
+		-- Respawn button
+		local respawnBtn = Instance.new("TextButton")
+		respawnBtn.Size = UDim2.new(0.5, -2.5, 1, 0)
+		respawnBtn.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+		respawnBtn.BackgroundTransparency = 0.5
+		respawnBtn.BorderSizePixel = 0
+		respawnBtn.Text = "Respawn"
+		respawnBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		respawnBtn.TextSize = 11
+		respawnBtn.Font = Enum.Font.GothamBold
+		respawnBtn.TextScaled = true
+		respawnBtn.LayoutOrder = 1
+		respawnBtn.Parent = respawnRow
+		
+		local respawnCorner = Instance.new("UICorner")
+		respawnCorner.CornerRadius = UDim.new(0, 4)
+		respawnCorner.Parent = respawnBtn
+		
+		-- Clear Checkpoint button
+		local clearCpBtn = Instance.new("TextButton")
+		clearCpBtn.Size = UDim2.new(0.5, -2.5, 1, 0)
+		clearCpBtn.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+		clearCpBtn.BackgroundTransparency = 0.5
+		clearCpBtn.BorderSizePixel = 0
+		clearCpBtn.Text = "Clear checkpoint"
+		clearCpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		clearCpBtn.TextSize = 10
+		clearCpBtn.Font = Enum.Font.GothamBold
+		clearCpBtn.TextScaled = true
+		clearCpBtn.LayoutOrder = 2
+		clearCpBtn.Parent = respawnRow
+		
+		local clearCpCorner = Instance.new("UICorner")
+		clearCpCorner.CornerRadius = UDim.new(0, 4)
+		clearCpCorner.Parent = clearCpBtn
+		
+		-- Button hover effects
+		for _, btn in ipairs({flyBtn, saveCpBtn, respawnBtn, clearCpBtn}) do
+			btn.MouseEnter:Connect(function()
+				btn.BackgroundTransparency = 0.3
+			end)
+			
+			btn.MouseLeave:Connect(function()
+				btn.BackgroundTransparency = 0.5
+			end)
+		end
+		
+		-- Button functionality
+		flyBtn.MouseButton1Click:Connect(function()
+			print("[Z33TO] Fly activated with speed: " .. flySpeedValue)
+		end)
+		
+		saveCpBtn.MouseButton1Click:Connect(function()
+			print("[Z33TO] Checkpoint saved")
+		end)
+		
+		respawnBtn.MouseButton1Click:Connect(function()
+			print("[Z33TO] Respawning player")
+			local plr = Players.LocalPlayer
+			if plr.Character then
+				plr.Character:FindFirstChild("Humanoid").Health = 0
+			end
+		end)
+		
+		clearCpBtn.MouseButton1Click:Connect(function()
+			print("[Z33TO] Checkpoint cleared")
+		end)
+		
+	else
+		-- Default layout for other pages
+		local pageLayout = Instance.new("UIListLayout")
+		pageLayout.Padding = UDim.new(0, 15)
+		pageLayout.FillDirection = Enum.FillDirection.Vertical
+		pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		pageLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+		pageLayout.Parent = page
+		
+		local pagePadding = Instance.new("UIPadding")
+		pagePadding.PaddingTop = UDim.new(0, 20)
+		pagePadding.PaddingBottom = UDim.new(0, 20)
+		pagePadding.PaddingLeft = UDim.new(0, 10)
+		pagePadding.PaddingRight = UDim.new(0, 10)
+		pagePadding.Parent = page
+		
+		local placeholder = Instance.new("TextLabel")
+		placeholder.Size = UDim2.new(1, 0, 0, 40)
+		placeholder.BackgroundTransparency = 1
+		placeholder.BorderSizePixel = 0
+		placeholder.Text = pageName .. " Menu"
+		placeholder.TextColor3 = Color3.fromRGB(0, 255, 200)
+		placeholder.TextSize = 16
+		placeholder.Font = Enum.Font.GothamBold
+		placeholder.TextScaled = true
+		placeholder.TextWrapped = true
+		placeholder.LayoutOrder = 1
+		placeholder.Parent = page
+	end
+	
+	pages[pageName] = page
+end
+
+-- Create sidebar buttons
+local allButtonNames = {"Home", "Game", "Character", "Target", "Animations", "Misc", "Credits"}
+local selectedButton = nil
+
+for i, buttonName in ipairs(allButtonNames) do
+	print("[Z33TO] Creating button: " .. buttonName)
+	local sideBtn = Instance.new("TextButton")
+	sideBtn.Name = buttonName .. "Btn"
+	sideBtn.Size = UDim2.new(1, 0, 0, 28)
+	sideBtn.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+	sideBtn.BackgroundTransparency = 0.5
+	sideBtn.BorderSizePixel = 0
+	sideBtn.Text = buttonName
+	sideBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	sideBtn.TextSize = 11
+	sideBtn.Font = Enum.Font.GothamBold
+	sideBtn.LayoutOrder = i
+	sideBtn.Parent = leftSidebar
+	sideBtn.ZIndex = 12
+	sideBtn.Visible = true
+	
+	local sideCorner = Instance.new("UICorner")
+	sideCorner.CornerRadius = UDim.new(0, 4)
+	sideCorner.Parent = sideBtn
+	
+	sideBtn.MouseButton1Click:Connect(function()
+		print("[Z33TO] Clicked: " .. buttonName)
+		
+		if selectedButton then
+			selectedButton.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+			selectedButton.BackgroundTransparency = 0.5
+		end
+		
+		sideBtn.BackgroundColor3 = Color3.fromRGB(200, 150, 200)
+		sideBtn.BackgroundTransparency = 0.2
+		selectedButton = sideBtn
+		
+		showPage(buttonName)
+	end)
+	
+	sideBtn.MouseEnter:Connect(function()
+		if sideBtn ~= selectedButton then
+			sideBtn.BackgroundTransparency = 0.3
+		end
+	end)
+	
+	sideBtn.MouseLeave:Connect(function()
+		if sideBtn ~= selectedButton then
+			sideBtn.BackgroundTransparency = 0.5
+		end
+	end)
+end
+
+-- Show Home by default
+showPage("Home")
+
+-- Select Home button
+local homeBtn = leftSidebar:FindFirstChild("HomeBtn")
+if homeBtn then
+	homeBtn.BackgroundTransparency = 0.2
+	selectedButton = homeBtn
+end
+
+-- Drag functionality
+local dragging = false
+local dragStart = nil
+local startPos = nil
+
+topBar.InputBegan:Connect(function(input, gameProcessed)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = UserInputService:GetMouseLocation()
+		startPos = uiWindow.Position
+	end
+end)
+
+topBar.InputEnded:Connect(function(input, gameProcessed)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if dragging and dragStart and startPos then
+		local currentMouse = UserInputService:GetMouseLocation()
+		local delta = currentMouse - dragStart
+		
+		uiWindow.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+-- Keyboard Shortcut (B to toggle)
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+	
+	if input.KeyCode == Enum.KeyCode.B then
+		screenGui.Enabled = not screenGui.Enabled
+	end
+end)
