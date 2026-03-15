@@ -63,6 +63,17 @@ local customPlayers = {
 		strokeThickness = 5,
 		cornerRadius = 20,
 	},
+	["6vryzx_alt"] = {
+		customName = "z33to OWNER",
+		icon       = "rbxassetid://139117044448847",
+		glitch     = true,
+		gradientColorLeft = Color3.fromRGB(160, 32, 240),
+		gradientColorRight = Color3.fromRGB(255,255,255),
+		nameTextColor = Color3.fromRGB(255, 255, 255),
+		usernameTextColor = Color3.fromRGB(255, 255, 255),
+		strokeColor = Color3.fromRGB(255, 255, 255),
+		strokeThickness = 5,
+		cornerRadius = 20,
 }
 
 local scriptUsers = {}
