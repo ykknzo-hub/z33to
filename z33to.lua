@@ -3,7 +3,7 @@ local TextChatService = game:GetService("TextChatService")
 local TweenService = game:GetService("TweenService")
 
 if not Players.LocalPlayer then
-    warn("This script must run as a LocalScript on the client!")
+    
     return
 end
 
@@ -13,12 +13,12 @@ local loadCustomPlayersSuccess, loadCustomPlayersError = pcall(function()
     if customPlayersCode then
         customPlayers = customPlayersCode()
     else
-        warn("Failed to load customPlayers!")
+        
     end
 end)
 
 if not loadCustomPlayersSuccess then
-    warn("Error loading customPlayers: " .. tostring(loadCustomPlayersError))
+    
 end
 
 local scriptUsers = {}
