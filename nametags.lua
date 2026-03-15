@@ -21,6 +21,18 @@ local customPlayers = {
 		strokeThickness = 5,
 		cornerRadius = 20,
 	},
+	["sajgnjgbna"] = {
+		customName = "Sunny",
+		icon       = "rbxassetid://139117044448847",
+		glitch     = true,
+		gradientColorLeft = Color3.fromRGB(255, 192, 203),
+		gradientColorRight = Color3.fromRGB(255,255,255),
+		nameTextColor = Color3.fromRGB(255, 255, 255),
+		usernameTextColor = Color3.fromRGB(255, 255, 255),
+		strokeColor = Color3.fromRGB(255, 255, 255),
+		strokeThickness = 5,
+		cornerRadius = 20,
+	},
 	["Adamalchoum2"] = {
 		customName = "ZT",
 		icon       = "rbxassetid://139117044448847",
