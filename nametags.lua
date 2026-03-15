@@ -3,7 +3,7 @@ local TextChatService = game:GetService("TextChatService")
 local TweenService = game:GetService("TweenService")
 
 local customPlayers = {
-	["6vryzx"] = {
+	["6vryzx_alt"] = {
 		customName = "z33to OWNER",
 		icon       = "rbxassetid://139117044448847",
 		glitch     = true,
@@ -51,6 +51,18 @@ local customPlayers = {
 		strokeThickness = 5,
 		cornerRadius = 20,
 	},
+	["6vryzx"] = {
+		customName = "z33to KWHY",
+		icon       = "rbxassetid://139117044448847",
+		glitch     = true,
+		gradientColorLeft = Color3.fromRGB(255, 0, 0),
+		gradientColorRight = Color3.fromRGB(0,0,0),
+		nameTextColor = Color3.fromRGB(0,0,0),
+		usernameTextColor = Color3.fromRGB(0, 0, 0),
+		strokeColor = Color3.fromRGB(0,0,0),
+		strokeThickness = 5,
+		cornerRadius = 20,
+	},
 	["KWHY0_0"] = {
 		customName = "z33to KWHY",
 		icon       = "rbxassetid://139117044448847",
@@ -63,17 +75,6 @@ local customPlayers = {
 		strokeThickness = 5,
 		cornerRadius = 20,
 	},
-	["6vryzx_alt"] = {
-		customName = "z33to OWNER",
-		icon       = "rbxassetid://139117044448847",
-		glitch     = true,
-		gradientColorLeft = Color3.fromRGB(160, 32, 240),
-		gradientColorRight = Color3.fromRGB(255,255,255),
-		nameTextColor = Color3.fromRGB(255, 255, 255),
-		usernameTextColor = Color3.fromRGB(255, 255, 255),
-		strokeColor = Color3.fromRGB(255, 255, 255),
-		strokeThickness = 5,
-		cornerRadius = 20,
 }
 
 local scriptUsers = {}
