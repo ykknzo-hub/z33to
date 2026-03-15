@@ -58,7 +58,7 @@ local respondedPlayers = {}
 local currentPlayer = Players.LocalPlayer
 local hasSpoken = false
 local generalChannel = nil
-local TAG_TRIGGER = "```"
+local TAG_TRIGGER = "、"
 
 local function createGradientColors(color1, color2)
 	return ColorSequence.new{
