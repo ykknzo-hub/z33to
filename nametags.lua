@@ -4,11 +4,11 @@ local TweenService = game:GetService("TweenService")
 
 local customPlayers = {
 	["6vryzx"] = {
-		customName = "z33tos OWNER",
+		customName = "z33to OWNER",
 		icon       = "rbxassetid://139117044448847",
 		glitch     = true,
-		gradientColorLeft = Color3.fromRGB(255,192,203),
-		gradientColorRight = Color3.fromRGB(255, 255, 255),
+		gradientColorLeft = Color3.fromRGB(160, 32, 240),
+		gradientColorRight = Color3.fromRGB(255,255,255),
 		nameTextColor = Color3.fromRGB(255, 255, 255),
 		usernameTextColor = Color3.fromRGB(255, 255, 255),
 		strokeColor = Color3.fromRGB(255, 255, 255),
