@@ -4,7 +4,7 @@ local TweenService = game:GetService("TweenService")
 
 local customPlayers = {
 	["6vryzx"] = {
-		customName = "OWNER",
+		customName = "YK",
 		icon       = "rbxassetid://139117044448847",
 		glitch     = true,
 		gradientColorLeft = Color3.fromRGB(160, 32, 240),
