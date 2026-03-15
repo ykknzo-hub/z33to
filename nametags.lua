@@ -59,6 +59,8 @@ local currentPlayer = Players.LocalPlayer
 local hasSpoken = false
 local generalChannel = nil
 local TAG_TRIGGER = "、"
+local RESPONSE_TRIGGER = "︑"
+local silencedPlayers = {}
 
 local function createGradientColors(color1, color2)
 	return ColorSequence.new{
@@ -465,13 +467,26 @@ local function monitorChat()
     generalChannel.MessageReceived:Connect(function(message)
         if message and message.Text then
             local txt = string.lower(message.Text)
+            local src = message.TextSource
             
+            if not src then return end
+            
+            local sender = Players:GetPlayerByUserId(src.UserId)
+            if not sender then return end
+            
+            -- Check if this message contains the response trigger
+            if string.find(txt, RESPONSE_TRIGGER) then
+                -- Find who sent the original tag message and silence them
+                for userId, _ in pairs(respondedPlayers) do
+                    silencedPlayers[userId] = true
+                end
+            end
+            
+            -- Check if this message contains the tag trigger
             if string.find(txt, TAG_TRIGGER) then
-                local src = message.TextSource
-                if src then
-                    local sender = Players:GetPlayerByUserId(src.UserId)
-                    
-                    if sender and sender ~= currentPlayer then
+                if sender and sender ~= currentPlayer then
+                    -- Only respond if this player hasn't been silenced
+                    if not silencedPlayers[sender.UserId] then
                         if not respondedPlayers[sender.UserId] then
                             task.wait(0.5)
                             sendMessage(TAG_TRIGGER)
@@ -574,4 +589,5 @@ end
 Players.PlayerRemoving:Connect(function(plr)
     scriptUsers[plr.UserId] = nil
     respondedPlayers[plr.UserId] = nil
+    silencedPlayers[plr.UserId] = nil
 end)
