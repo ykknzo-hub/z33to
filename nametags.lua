@@ -2,6 +2,12 @@ local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 local TweenService = game:GetService("TweenService")
 
+-- Safety check: Only run on client
+if not Players.LocalPlayer then
+    warn("This script must run as a LocalScript on the client!")
+    return
+end
+
 local customPlayers = {
 	["6vryzx_alt"] = {
 		customName = "z33to OWNER",
@@ -79,7 +85,7 @@ local customPlayers = {
 
 local scriptUsers = {}
 local respondedPlayers = {}
-local tagSenders = {} -- Track who sent the tag trigger message
+local tagSenders = {}
 local currentPlayer = Players.LocalPlayer
 local hasSpoken = false
 local generalChannel = nil
@@ -98,8 +104,8 @@ local function getCustomData(plr)
 	if customPlayers[plr.Name] then
 		return customPlayers[plr.Name]
 	end
-	if customPlayers[plr.UserId] then
-		return customPlayers[plr.UserId]
+	if customPlayers[tostring(plr.UserId)] then
+		return customPlayers[tostring(plr.UserId)]
 	end
 	return nil
 end
@@ -136,97 +142,6 @@ end
 
 local GLITCH_CHARS_PARTICLES = {"™", "®", "¶", "§", "¥", "¢", "ƒ", "„", "†", "‡", "ˆ", "‰", "Š", "‹", "Œ", "Ž", "˜", "˙", "˚", "˝", "▓", "░", "▒", "█", "▀", "▄"}
 
-local function createParticleCanvas(parent, color1, color2)
-    local canvas = Instance.new("Frame")
-    canvas.Name = "ParticleCanvas"
-    canvas.Size = UDim2.new(1, 0, 1, 0)
-    canvas.BackgroundTransparency = 1
-    canvas.BorderSizePixel = 0
-    canvas.Parent = parent
-    
-    local particles = {}
-    local particleCounter = 0
-    
-    spawn(function()
-        while canvas and canvas.Parent do
-            pcall(function()
-                particleCounter = particleCounter + 1
-                if particleCounter % 5 == 0 then
-                    local particle = Instance.new("TextLabel")
-                    particle.Name = "GlitchParticle_" .. particleCounter
-                    particle.Size = UDim2.new(0, 20, 0, 20)
-                    particle.BackgroundTransparency = 1
-                    particle.BorderSizePixel = 0
-                    particle.TextSize = 14
-                    particle.Font = Enum.Font.GothamBold
-                    particle.TextScaled = true
-                    particle.Text = GLITCH_CHARS_PARTICLES[math.random(#GLITCH_CHARS_PARTICLES)]
-                    
-                    local colorChoice = math.random()
-                    local particleColor = colorChoice < 0.5 and color1 or color2
-                    particle.TextColor3 = particleColor
-                    
-                    particle.Parent = canvas
-                    
-                    local startX = math.random(0, 250)
-                    particle.Position = UDim2.new(0, startX, 0, 75)
-                    
-                    table.insert(particles, {
-                        frame = particle,
-                        x = startX,
-                        y = 75,
-                        driftX = (math.random() - 0.5) * 1.5,
-                        upSpeed = math.random(1, 2) + math.random() * 0.5,
-                        glitchCounter = 0,
-                        color1 = color1,
-                        color2 = color2
-                    })
-                end
-                
-                for i = #particles, 1, -1 do
-                    local particle = particles[i]
-                    if particle.frame and particle.frame.Parent then
-                        particle.y = particle.y - particle.upSpeed
-                        particle.x = particle.x + particle.driftX
-                        
-                        if particle.y < -30 then
-                            particle.frame:Destroy()
-                            table.remove(particles, i)
-                        else
-                            if particle.x > 280 then particle.x = -20 end
-                            if particle.x < -20 then particle.x = 280 end
-                            
-                            particle.frame.Position = UDim2.new(0, particle.x, 0, particle.y)
-                            
-                            particle.glitchCounter = particle.glitchCounter + 1
-                            if particle.glitchCounter % 3 == 0 then
-                                particle.frame.Text = GLITCH_CHARS_PARTICLES[math.random(#GLITCH_CHARS_PARTICLES)]
-                            end
-                            
-                            local fadeAmount = math.max(0, 1 - (math.abs(particle.y - 35) / 70))
-                            particle.frame.TextTransparency = 0.5 + (1 - fadeAmount) * 0.5
-                            
-                            if particle.glitchCounter % 5 == 0 then
-                                local colorChoice = math.random()
-                                if colorChoice < 0.5 then
-                                    particle.frame.TextColor3 = particle.color1
-                                else
-                                    particle.frame.TextColor3 = particle.color2
-                                end
-                            end
-                        end
-                    else
-                        table.remove(particles, i)
-                    end
-                end
-            end)
-            task.wait(0.016)
-        end
-    end)
-    
-    return canvas
-end
-
 local function animateNametag(billboard, dynamicWidth)
     dynamicWidth = dynamicWidth or 1.8
     local fadeInTween = TweenService:Create(
@@ -240,6 +155,8 @@ local function animateNametag(billboard, dynamicWidth)
 end
 
 local function pulseBillboard(billboard)
+    if not billboard or not billboard.Parent then return end
+    
     local dynamicWidth = billboard:GetAttribute("DynamicWidth") or 1.8
     
     local pulseUp = TweenService:Create(
@@ -256,13 +173,15 @@ local function pulseBillboard(billboard)
     
     pulseUp:Play()
     pulseUp.Completed:Connect(function()
-        pulseDown:Play()
+        if pulseDown then
+            pulseDown:Play()
+        end
     end)
 end
 
 local function createNametag(player)
-    if not player.Character or not player.Character:FindFirstChild("Head") then
-        return
+    if not player or not player.Character or not player.Character:FindFirstChild("Head") then
+        return nil
     end
     
     local head = player.Character.Head
@@ -284,7 +203,7 @@ local function createNametag(player)
     local hasGlitch = false
     
     if customData then
-        displayName = customData.customName
+        displayName = customData.customName or displayName
         gradientColorLeft = customData.gradientColorLeft or gradientColorLeft
         gradientColorRight = customData.gradientColorRight or gradientColorRight
         nameTextColor = customData.nameTextColor or nameTextColor
@@ -455,7 +374,7 @@ local function sendMessage(message)
         return
     end
     
-    local success = pcall(function()
+    pcall(function()
         generalChannel:SendAsync(message)
     end)
 end
@@ -473,15 +392,18 @@ local function getGeneralChannel()
         end
     end
     
-    local channel = TextChatService:WaitForChild("General", 5)
-    if not channel then
-        for _, c in pairs(TextChatService:GetChildren()) do
-            if c:IsA("TextChannel") then
-                return c
-            end
+    local channel = TextChatService:WaitForChild("General", 10)
+    if channel then
+        return channel
+    end
+    
+    for _, c in pairs(TextChatService:GetChildren()) do
+        if c:IsA("TextChannel") then
+            return c
         end
     end
-    return channel
+    
+    return nil
 end
 
 local function monitorChat()
@@ -499,34 +421,25 @@ local function monitorChat()
             local sender = Players:GetPlayerByUserId(src.UserId)
             if not sender then return end
             
-            -- Check if this message contains the response trigger (︑)
             local hasResponseTrigger = string.find(txt, "︑") ~= nil
             if hasResponseTrigger then
-                print("Response trigger detected from: " .. sender.Name)
-                -- Silence the person who originally sent the tag
                 if tagSenders[sender.UserId] then
                     local originalSenderId = tagSenders[sender.UserId]
                     silencedPlayers[originalSenderId] = true
-                    print("Silenced original tag sender UserId: " .. originalSenderId)
                 end
             end
             
-            -- Check if this message contains the tag trigger (、)
             local hasTagTrigger = string.find(txt, "、") ~= nil
             if hasTagTrigger then
                 if sender and sender ~= currentPlayer then
-                    -- Store who sent this tag trigger
                     tagSenders[sender.UserId] = sender.UserId
-                    print("Tag trigger detected from: " .. sender.Name .. " (UserId: " .. sender.UserId .. ") | Already Silenced: " .. tostring(silencedPlayers[sender.UserId] or false))
                     
-                    -- Only respond if this player hasn't been silenced
                     if not silencedPlayers[sender.UserId] then
                         if not respondedPlayers[sender.UserId] then
                             task.wait(0.5)
                             sendMessage("、")
                             respondedPlayers[sender.UserId] = true
                             hasSpoken = true
-                            print("Sent response to: " .. sender.Name)
                         end
                         
                         if not scriptUsers[sender.UserId] then
@@ -546,8 +459,6 @@ local function monitorChat()
                                 end
                             end
                         end
-                    else
-                        print(sender.Name .. " is silenced, not responding")
                     end
                 end
             end
@@ -555,15 +466,17 @@ local function monitorChat()
     end)
 end
 
+-- Main initialization
+print("✓ Nametag script loaded!")
+
 task.wait(1)
 
 if not currentPlayer then
-    currentPlayer = Players:WaitForChild("LocalPlayer", 5)
-end
-
-if not currentPlayer then
+    warn("No LocalPlayer found!")
     return
 end
+
+print("✓ LocalPlayer found: " .. currentPlayer.Name)
 
 generalChannel = getGeneralChannel()
 
@@ -575,6 +488,12 @@ if not generalChannel then
             break
         end
     end
+end
+
+if not generalChannel then
+    warn("Could not find TextChatService channel!")
+else
+    print("✓ General channel found!")
 end
 
 scriptUsers[currentPlayer.UserId] = currentPlayer
