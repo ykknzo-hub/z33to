@@ -10,7 +10,8 @@ return {
 		strokeColor = Color3.fromRGB(255, 255, 255),
 		strokeThickness = 5,
 		cornerRadius = 20,
-		["test"] = {
+		},
+	["test"] = {
         customName = "test",
         icon       = "rbxassetid://139117044448847",
         glitch     = true,
@@ -22,7 +23,6 @@ return {
         strokeThickness = 5,
         cornerRadius = 20,
     },
-},
 	["sajgnjgbna"] = {
 		customName = "Sunny",
 		icon       = "rbxassetid://139117044448847",
