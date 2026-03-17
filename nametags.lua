@@ -10,7 +10,7 @@ return {
 		strokeColor = Color3.fromRGB(255, 255, 255),
 		strokeThickness = 5,
 		cornerRadius = 20,
-},
+    },
 	["sajgnjgbna"] = {
 		customName = "Sunny",
 		icon       = "rbxassetid://139117044448847",
