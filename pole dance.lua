@@ -1,5 +1,5 @@
 return {
-	["Chandelier"] = {
+	["Pole dance V2"] = {
 		{Time = 0.0000, Data = {
 			["LowerTorso"] = CFrame.new(-0.0024, -0.0759, 0.0094) * CFrame.Angles(math.rad(2.08), math.rad(1.93), math.rad(-0.78)),
 			["UpperTorso"] = CFrame.new(0.0000, 0.0000, 0.0000) * CFrame.Angles(math.rad(-3.77), math.rad(0.53), math.rad(-0.82)),
