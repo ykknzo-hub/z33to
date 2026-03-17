@@ -72,7 +72,7 @@ return {
 		cornerRadius = 20,
 	},
 	["g6h2z"] = {
-		customName = "z33to NIGGERSLAYER",
+		customName = "z33to MRM",
 		icon       = "rbxassetid://139117044448847",
 		glitch     = true,
 		gradientColorLeft = Color3.fromRGB(255, 255, 255),
