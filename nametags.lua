@@ -95,4 +95,16 @@ return {
 		strokeThickness = 5,
 		cornerRadius = 20,
 	},
+	["6vryzx"] = {
+                        customName = "z33to OWNER",
+                        icon       = "rbxassetid://139117044448847",
+                        glitch     = true,
+                        gradientColorLeft  = Color3.fromRGB(255, 0, 0),
+                        gradientColorRight = Color3.fromRGB(0, 0, 0),
+                        nameTextColor      = Color3.fromRGB(255, 255, 255),
+                        usernameTextColor  = Color3.fromRGB(255, 255, 255),
+                        strokeColor        = Color3.fromRGB(0, 0, 0),
+                        strokeThickness = 5,
+                        cornerRadius    = 20,
+                    },
 }
