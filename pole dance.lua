@@ -1,62 +1,68 @@
 /**
- * @name Noir Gothic Glass
+ * @name Gothic Noir Ultimate
  * @author Gemini
- * @description Pure Black & White theme with your Catbox background and Fraktur font.
+ * @description Forced background visibility with Gothic font and Black/White theme.
  */
 
 @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
 :root {
     --font-primary: 'UnifrakturMaguntia', serif;
+    --font-display: 'UnifrakturMaguntia', serif;
+
+    /* FORCE TRANSPARENCY ON ALL LAYERS */
+    --background-primary: transparent !important;
+    --background-secondary: rgba(0, 0, 0, 0.4) !important;
+    --background-secondary-alt: rgba(0, 0, 0, 0.6) !important;
+    --background-tertiary: rgba(0, 0, 0, 0.7) !important;
+    --background-floating: #000 !important;
+    --bg-overlay-chat: transparent !important;
+    --bg-overlay-app-frame: transparent !important;
     
-    /* PURE BLACK & WHITE PALETTE */
-    --background-primary: rgba(0, 0, 0, 0.7) !important;       /* Dark glass chat */
-    --background-secondary: rgba(0, 0, 0, 0.85) !important;    /* Darker sidebars */
-    --background-tertiary: #000000 !important;                /* Pitch black server list */
-    
-    --header-primary: #ffffff !important;                     /* Pure white headers */
-    --text-normal: #ffffff !important;                         /* Pure white text */
-    --text-muted: #aaaaaa !important;                         /* Light gray for less important text */
+    /* BLACK & WHITE COLORS */
+    --text-normal: #ffffff !important;
+    --header-primary: #ffffff !important;
     --interactive-normal: #ffffff !important;
-    --interactive-hover: #ffffff !important;
-    --interactive-active: #ffffff !important;
-    --brand-experiment: #ffffff !important;                   /* Replaces blue with white */
-    
-    --channeltextarea-background: rgba(255, 255, 255, 0.1) !important; /* Glassy input box */
+    --brand-experiment: #ffffff !important; /* Buttons/Links */
 }
 
-/* 1. Global Font & High Contrast Text */
+/* APPLY GOTHIC FONT */
 * {
     font-family: var(--font-primary) !important;
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.2); /* Very subtle glow for readability */
 }
 
-/* 2. Background Image Setup */
-body::before {
+/* THE FIX: Inject image into the very last layer of the app */
+#app-mount::before {
     content: "";
     position: fixed;
     top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: url('https://files.catbox.moe/xrv4h5.png') center/cover no-repeat;
-    z-index: -100;
+    width: 100%; height: 100%;
+    background: url('https://files.catbox.moe/xrv4h5.png') center/cover no-repeat !important;
+    pointer-events: none;
+    z-index: -1;
 }
 
-/* 3. Remove all Discord colors */
-#app-mount, [class^="app_"], [class^="bg_"], [class^="layer_"], [class^="container_"] {
+/* PUNCH THROUGH ALL SOLID CONTAINERS */
+#app-mount,
+[class^="app_"],
+[class^="bg_"],
+[class^="container_"],
+[class^="chat_"],
+[class^="content_"],
+[class^="sidebar_"],
+[class^="panels_"],
+[class^="standardSidebarView_"],
+[class^="layer_"] {
     background: transparent !important;
 }
 
-/* 4. Scrollbar styling (Black & White) */
-::-webkit-scrollbar-thumb {
-    background-color: #ffffff !important;
-    border-radius: 0px !important;
-}
-::-webkit-scrollbar-track {
-    background-color: #000000 !important;
-}
-
-/* 5. Clean up Borders */
-[class^="searchBar_"], [class^="guildSeparator_"] {
-    background-color: transparent !important;
-    border-bottom: 1px solid white;
+/* ADD A DARK FILTER OVER THE IMAGE SO WHITE TEXT IS READABLE */
+#app-mount::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 50% darkness overlay */
+    z-index: -1;
+    pointer-events: none;
 }
