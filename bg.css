@@ -1,0 +1,44 @@
+/**
+ * @name Perfect Gothic Glass
+ * @author Gemini
+ * @description Glassmorphism background with Catbox link and true Fraktur font.
+ */
+
+/* Imports the exact Gothic/Fraktur style to match your symbols */
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
+
+:root {
+    /* 1. PASTE YOUR CATBOX LINK HERE */
+    --bg-image: url('https://files.catbox.moe/xrv4h5.png');
+    
+    /* 2. Global Font Replacement */
+    --font-primary: 'UnifrakturMaguntia', serif;
+    --font-display: 'UnifrakturMaguntia', serif;
+
+    /* 3. Glass Transparency Settings (Adjust the 0.6 to make things darker/lighter) */
+    --background-primary: rgba(0, 0, 0, 0.4);       /* Main chat area */
+    --background-secondary: rgba(0, 0, 0, 0.6);     /* Channel list */
+    --background-secondary-alt: rgba(0, 0, 0, 0.7); /* Member list */
+    --background-tertiary: rgba(0, 0, 0, 0.8);      /* Server list */
+    --channeltextarea-background: rgba(0, 0, 0, 0.5); /* Typing box */
+}
+
+/* Apply the Gothic font to literally everything */
+* {
+    font-family: var(--font-primary) !important;
+}
+
+/* Set the background image on the absolute bottom layer */
+body {
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Strip away Discord's solid background layers so the image shows */
+#app-mount, 
+[class^="bg_"], 
+[class^="app_"] {
+    background: transparent !important;
+}
