@@ -1,44 +1,50 @@
 /**
- * @name Perfect Gothic Glass
+ * @name Perfect Gothic Glass (Fixed Background)
  * @author Gemini
- * @description Glassmorphism background with Catbox link and true Fraktur font.
+ * @description Glassmorphism background with your Catbox link and Fraktur font.
  */
 
-/* Imports the exact Gothic/Fraktur style to match your symbols */
 @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
 :root {
-    /* 1. PASTE YOUR CATBOX LINK HERE */
-    --bg-image: url('https://files.catbox.moe/xrv4h5.png');
-    
-    /* 2. Global Font Replacement */
     --font-primary: 'UnifrakturMaguntia', serif;
-    --font-display: 'UnifrakturMaguntia', serif;
-
-    /* 3. Glass Transparency Settings (Adjust the 0.6 to make things darker/lighter) */
-    --background-primary: rgba(0, 0, 0, 0.4);       /* Main chat area */
-    --background-secondary: rgba(0, 0, 0, 0.6);     /* Channel list */
-    --background-secondary-alt: rgba(0, 0, 0, 0.7); /* Member list */
-    --background-tertiary: rgba(0, 0, 0, 0.8);      /* Server list */
-    --channeltextarea-background: rgba(0, 0, 0, 0.5); /* Typing box */
 }
 
-/* Apply the Gothic font to literally everything */
+/* 1. Global Font Replacement */
 * {
     font-family: var(--font-primary) !important;
 }
 
-/* Set the background image on the absolute bottom layer */
-body {
-    background-image: var(--bg-image);
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+/* 2. Strip away Discord's solid background layers */
+body, 
+#app-mount, 
+[class^="app_"], 
+[class^="bg_"],
+[class^="layer_"] {
+    background: transparent !important;
 }
 
-/* Strip away Discord's solid background layers so the image shows */
-#app-mount, 
-[class^="bg_"], 
-[class^="app_"] {
-    background: transparent !important;
+/* 3. Force the background image onto a fixed bottom layer */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* YOUR EXACT CATBOX LINK IS HERE */
+    background-image: url('https://files.catbox.moe/xrv4h5.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -100; 
+}
+
+/* 4. Glass Transparency Settings for Chat & Menus */
+.theme-dark, .theme-light {
+    --background-primary: rgba(0, 0, 0, 0.4) !important;       /* Main chat area */
+    --background-secondary: rgba(0, 0, 0, 0.6) !important;     /* Channel list */
+    --background-secondary-alt: rgba(0, 0, 0, 0.7) !important; /* Member list */
+    --background-tertiary: rgba(0, 0, 0, 0.8) !important;      /* Server list */
+    --channeltextarea-background: rgba(0, 0, 0, 0.5) !important; /* Typing box */
 }
